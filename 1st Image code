@@ -1,0 +1,35 @@
+import cv2
+
+# Load image, grayscale, Gaussian blur, threshing
+
+image = cv2.imread("image.jpg")
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+blur = cv2.GaussianBlur(gray, (5,5), 0)
+thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+visualize = cv2.imshow('binary image', thresh)
+cv2.waitKey(0)
+cv2.imwrite('image_thres1.jpg', thresh)
+cv2. destroyAllWindows()
+
+#finding contours
+
+contours, hierarchy = cv2.findContours(image=thresh, mode=cv2.RETR_TREE,
+method=cv2.CHAIN_APPROX_NONE)
+
+# draw contours on the original image
+image_copy = image.copy()
+cv2.drawContours(image=image_copy, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=2, lineType=cv2.LINE_AA)
+
+#seeing the results
+
+cv2.imshow('None approximation', image_copy)
+cv2.waitKey(0)
+cv2.imwrite('contours_none_image.jpg', image_copy)
+cv2.destroyAllWindows()
+
+#finding amount of pixels in the contour 
+
+area = cv2.contourArea(contours[0])
+print("Area of all contours in pixels =",(area))
+print("Average number of pixels occupied by a single apple =",(area/len(contours)))
+print("Total number of contours =",(len(contours)))
